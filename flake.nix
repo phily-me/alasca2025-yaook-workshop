@@ -5,6 +5,7 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
     yaookctl.url = "gitlab:yaook/yaookctl";
+    yaookctl.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs =
@@ -33,12 +34,16 @@
 
           shellHook = ''
             export KUBECONFIG=$(pwd)/workshop-11.yaml
-            export YAOOK_OP_NAMESPACE=yaook
             export YAOOK_VERSION=$(helm search repo yaook.cloud/crds -o json | jq -r '.[0].version')
-
-            echo "yaook set to: $YAOOK_VERSION"
-            echo "kubectl $(kubectl version --client --short 2>/dev/null || kubectl version --client)"
-            echo "helm $(helm version --short 2>/dev/null || helm version)"
+            
+            echo "KUBECONFIG: $KUBECONFIG"
+            echo "YAOOK_VERSION: $YAOOK_VERSION"
+            echo ""
+            echo "kubectl: $(kubectl version --client -o json 2>/dev/null | jq -r '.clientVersion.gitVersion' || echo 'unknown')"
+            echo "helm: $(helm version --short 2>/dev/null | cut -d'+' -f1 || echo 'unknown')"
+            echo "yq: $(yq --version 2>/dev/null || echo 'unknown')"
+            echo "k9s: $(k9s version -s | head -n1 | awk '{print $NF}' 2>/dev/null || echo 'unknown')"
+            echo "yaookctl: $(yaookctl --version 2>/dev/null || echo 'unknown')"
           '';
         };
       }

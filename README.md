@@ -52,4 +52,4 @@ Continue with `**Create OpenStack custom resource objects**`
 ## Notes
 - k9s is a TUI for kubectl
 - `kubectl get pods` mit `-n <namespace>` (z.B. `yaook`, `rook-ceph`) zeigt alle pods an
-- 
+-  `kubectl port-forward `
