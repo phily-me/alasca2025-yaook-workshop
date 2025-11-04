@@ -4,6 +4,7 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
+    yaookctl.url = "gitlab:yaook/yaookctl";
   };
 
   outputs =
@@ -11,6 +12,7 @@
       self,
       nixpkgs,
       flake-utils,
+      yaookctl,
     }:
     flake-utils.lib.eachDefaultSystem (
       system:
@@ -22,8 +24,11 @@
           buildInputs = with pkgs; [
             kubernetes-helm
             kubectl
+            k9s
             nixfmt
             yq
+
+            yaookctl.packages.${system}.default
           ];
 
           shellHook = ''

@@ -6,10 +6,10 @@
 - `kubectl`
 - `helm`
 - `yq`
+- Bash nutzen
 
 Get all nodes
 `kubectl --context workshop-11 get nodes`
-
 
 Run all the needed steps until `Label the control planes` ...
 
@@ -35,7 +35,21 @@ for node in $control_plane_nodes; do
 done
 
 export worker_nodes="shoot--f6e6896574--workshop-11-w-z1-85d88-cmtkk shoot--f6e6896574--workshop-11-w-z1-85d88-kll56"
+
+export worker_labels="compute.yaook.cloud/hypervisor-type=qemu compute.yaook.cloud/hypervisor=true"
+
 for node in $worker_nodes; do
-   kubectl label node "$node" $ctl_plane_labels
+   kubectl label node "$node" $worker_labels
 done
-``` 
+
+kubectl get secret rook-ceph-client-glance -n rook-ceph -o yaml | \
+  yq "del(.metadata.uid, .metadata.creationTimestamp, .metadata.resourceVersion, .metadata.ownerReferences) | .metadata.namespace = \"$YAOOK_OP_NAMESPACE\"" | \
+  kubectl apply -n $YAOOK_OP_NAMESPACE -f -
+```
+Continue with `**Create OpenStack custom resource objects**`
+
+
+## Notes
+- k9s is a TUI for kubectl
+- `kubectl get pods` mit `-n <namespace>` (z.B. `yaook`, `rook-ceph`) zeigt alle pods an
+- 
